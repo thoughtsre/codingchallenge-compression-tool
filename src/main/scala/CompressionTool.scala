@@ -1,6 +1,8 @@
 import scala.io.{BufferedSource, Source}
 import cats.effect.{IO, IOApp, Resource}
 
+import lib.HuffmanTree.*
+
 object CompressionTool extends IOApp.Simple {
 
     val fileName = "testText.txt"
@@ -14,24 +16,9 @@ object CompressionTool extends IOApp.Simple {
         })
     }
 
-    val testCount: String => IO[Unit] = fileName =>
-        calculateFrequencyTable(fileName).flatMap(m => IO.println(f"Count of 'X': ${m('X')}\nCount of 't': ${m('t')}"))
+    override def run: IO[Unit] = calculateFrequencyTable(fileName)
+        .map(m => initializeHuffmanLeafNodes(m))
+        .map(r => generateHuffmanTree(r))
+        .flatMap(IO.println)
 
-    object HuffmanTree {
-
-        trait HuffmanTreeBaseNode
-
-        case class HuffmanLeaf(char: Char, weight: Int)
-
-        case class HuffmanNode(left: HuffmanTreeBaseNode, right: HuffmanTreeBaseNode, weight: Int)
-
-    }
-
-    override def run: IO[Unit] = calculateFrequencyTable(fileName).map(m => m.toSeq.sortBy(_(1))).flatMap(IO.println)
-
-//    val freq: Map[Char, Int] = Map.empty[Char, Int]
-//
-//    val freqTable: Map[Char, Int] = file.toList.groupBy(identity).view.mapValues(chars => chars.length).toMap
-//
-//    println(freqTable('X'))
 }
