@@ -64,8 +64,17 @@ object HuffmanTree {
             val rest = l.drop(2)
             val mergedNode = mergeNodes(firstTwo.head, firstTwo.last)
 
-            generateHuffmanTree(mergedNode :: rest)
+            generateHuffmanTree((mergedNode :: rest).sorted)
         }
         case _ => Left(RuntimeException("List is empty!"))
+    }
+
+    def generatePrefixTable(root: HuffmanTreeBaseNode, currentPath: String = ""): Map[Char, String] = {
+        root match {
+            case leaf: HuffmanLeaf => List((leaf.char, currentPath)).toMap
+            case node: HuffmanNode => {
+                generatePrefixTable(node.left, currentPath + "0") ++ generatePrefixTable(node.right, currentPath + "1")
+            }
+        }
     }
 }

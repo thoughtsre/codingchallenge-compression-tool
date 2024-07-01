@@ -6,6 +6,7 @@ import lib.HuffmanTree.*
 
 class HuffmanTreeTestSuite extends AsyncFlatSpec with AsyncIOSpec with Matchers {
     val testFileName = "testText.txt"
+    val testFileName2 = "testText2.txt"
 
     val leaf1: HuffmanLeaf = HuffmanLeaf('X', 3)
     val leaf2: HuffmanLeaf = HuffmanLeaf('Y', 2)
