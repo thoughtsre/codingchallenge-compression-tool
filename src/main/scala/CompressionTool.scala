@@ -7,7 +7,7 @@ import java.io.{File, FileWriter}
 
 object CompressionTool extends IOApp.Simple {
 
-    val fileName = "src/main/resources/testText.txt"
+    val fileName = "src/main/resources/lesmiserables.txt"
     val outFileName = "src/main/resources/compressedText.ct"
 
     val initFileResource: String => Resource[IO, BufferedSource] = fileName =>
@@ -54,7 +54,7 @@ object CompressionTool extends IOApp.Simple {
             writer.write("###\n")
 
             for (b <- textBytes) {
-                writer.write(b.toByte)
+                writer.write(b.toChar)
             }
 
             IO.unit
