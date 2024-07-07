@@ -9,7 +9,7 @@ object Compression {
 
     val encodeFile: (Map[Char, String], String) => IO[String] = (prefixTable, fileName) => {
 
-        initFileResource(fileName).use(file => IO(file.grouped(100).map(chars => chars.map(c => prefixTable(c)).mkString).mkString))
+        inputFileResource(fileName).use(file => IO(file.grouped(100).map(chars => chars.map(c => prefixTable(c)).mkString).mkString))
 
     }
 
@@ -29,8 +29,9 @@ object Compression {
     }
 
     val compress: (String, String) => IO[Unit] = (fileName, outFileName) => for {
-        _ <- IO.println("Begin encoding...")
+        _ <- IO.println("Begin compression...")
         freqTable <- calculateFrequencyTable(fileName)
+        _ <- IO.println(freqTable)
         _ <- IO.println("Frequency table computed...")
         root <- generateFileHuffmanTree(freqTable)
         _ <- IO.println("Huffman tree generated...")
@@ -39,7 +40,9 @@ object Compression {
         encodedText <- encodeFile(prefix, fileName)
         - <- IO.println("Text encoded....")
         byteText <- packTextToBytes(encodedText)
+        _ <- IO.println(f"Estimated compressed file size: ${byteText.length / 1e6}MB")
         _ <- writeEncodedFile(byteText, freqTable, outFileName)
+        _ <- IO.println("Compressed file written!")
     } yield ()
 
 }

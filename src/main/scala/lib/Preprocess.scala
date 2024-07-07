@@ -7,7 +7,7 @@ import cats.effect.IO
 object Preprocess {
 
     val calculateFrequencyTable: String => IO[Map[Char, Int]] = fileName => {
-        initFileResource(fileName).use(file => {
+        inputFileResource(fileName).use(file => {
             IO(file.toList.groupBy(identity).view.mapValues(chars => chars.length).toMap)
         })
     }

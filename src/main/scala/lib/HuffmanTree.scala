@@ -1,5 +1,6 @@
 package lib
 
+import java.nio.ByteBuffer
 import scala.annotation.tailrec
 
 object HuffmanTree {
@@ -110,4 +111,112 @@ object HuffmanTree {
             case Nil => curString
         }
     }
+
+    def decodeBytes(root: HuffmanNode, bytes: List[Byte]): String = {
+
+        @tailrec
+        def decodeBits(
+                          root: HuffmanNode,
+                          startNode: HuffmanTreeBaseNode,
+                          bits: List[Char],
+                          curString: String = ""
+                      ): (String, HuffmanTreeBaseNode) = {
+
+            bits match {
+                case (h: Char) :: t => h match {
+                    case '0' => {
+                        startNode match {
+                            case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
+                            case branch: HuffmanNode => branch.left match {
+                                case lLeaf: HuffmanLeaf => decodeBits(root, lLeaf, t, curString + lLeaf.char)
+                                case lBranch: HuffmanNode => decodeBits(root, lBranch, t, curString)
+                            }
+                        }
+                    }
+                    case '1' => {
+                        startNode match {
+                            case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
+                            case branch: HuffmanNode => branch.right match {
+                                case rLeaf: HuffmanLeaf => decodeBits(root, rLeaf, t, curString + rLeaf.char)
+                                case rBranch: HuffmanNode => decodeBits(root, rBranch, t, curString)
+                            }
+                        }
+                    }
+                }
+                case Nil => (curString, startNode)
+            }
+        }
+
+        var startNode: HuffmanTreeBaseNode = root
+        var content: String = ""
+
+
+        for b <- bytes do {
+            val bits = b.toInt.toBinaryString.takeRight(8).reverse.padTo(8, "0").reverse.mkString.toList
+
+            var (content_int: String, startNode_int: HuffmanTreeBaseNode) = decodeBits(root, startNode, bits, content)
+
+            startNode = startNode_int
+            content = content_int
+        }
+
+        content
+
+    }
+
+    def decodeBytes2(root: HuffmanNode, bytes: List[Byte]): String = {
+
+        var startNode: HuffmanTreeBaseNode = root
+        var content: String = ""
+
+        for b <- bytes do {
+
+            val bits = b.toInt.toBinaryString.takeRight(8).reverse.padTo(8, "0").reverse.mkString.toList
+
+            for c <- bits do {
+
+                c match {
+                    case '0' => {
+                        startNode match {
+                            case leaf: HuffmanLeaf => {
+                                startNode = root.left
+                            }
+                            case node: HuffmanNode => {
+                                node.left match {
+                                    case lleaf: HuffmanLeaf => {
+                                        content += lleaf.char
+                                        startNode = lleaf
+                                    }
+                                    case lnode: HuffmanNode => {
+                                        startNode = lnode
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    case '1' => {
+                        startNode match {
+                            case leaf: HuffmanLeaf => {
+                                startNode = root.right
+                            }
+                            case node: HuffmanNode => {
+                                node.right match {
+                                    case rleaf: HuffmanLeaf => {
+                                        content += rleaf.char
+                                        startNode = rleaf
+                                    }
+                                    case rnode: HuffmanNode => {
+                                        startNode = rnode
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        content
+    }
+
 }

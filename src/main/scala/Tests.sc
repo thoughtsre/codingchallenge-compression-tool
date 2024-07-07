@@ -1,4 +1,5 @@
 import java.nio.ByteBuffer
+import java.nio.charset.StandardCharsets
 import scala.math.BigInt
 
 val bigIntArr = BigInt(12398325).toByteArray
@@ -22,5 +23,31 @@ val pos = byteBuffer.position()
 val L = byteArr.length - pos
 val remaining = byteArr.drop(pos)
 
-s -> 2,
--> 2, n -> 3, y -> 3, t -> 3, u -> 1, ! -> 1, a -> 6, m -> 1,   -> 8, ? -> 1, k -> 1, I -> 1, i -> 2, g -> 1, l -> 1, W -> 1, h -> 1, o -> 3, d -> 2
+val b = 10010001.toByte
+
+val bs = b.toInt.toBinaryString
+
+val sdf = (new String('䕖'.toString.getBytes("UTF-16"), StandardCharsets.UTF_16)).charAt(0)
+
+val abc = new String('a'.toString.getBytes("UTF-16"), StandardCharsets.UTF_16)
+
+val aa = '1'.toString.getBytes("UTF-16")
+
+val sdfbb = ByteBuffer.allocate(10)
+
+sdfbb.put(sdf)
+
+sdfbb.rewind()
+
+println(sdfbb.getChar())
+
+byteBuffer.put(sdf)
+
+'"'.toString.getBytes("UTF-8")
+
+103.toByte.toInt.toBinaryString.takeRight(8).reverse.padTo(8, "0").reverse.mkString
+
+100.toBinaryString
+
+byteBuffer.array
+byteBuffer.array.drop(byteBuffer.position())

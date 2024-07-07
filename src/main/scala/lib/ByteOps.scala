@@ -1,5 +1,6 @@
 package lib
 
+import java.lang.Runtime
 import java.nio.ByteBuffer
 import scala.math.BigInt
 
@@ -7,7 +8,8 @@ object ByteOps {
 
     private object valueToByteExtensions {
         extension (integer: Int) def toByteArr: Array[Byte] = BigInt(integer).toByteArray.reverse.padTo(4, 0.toByte).reverse
-        extension (char: Char) def toByteArr: Array[Byte] = Array(0.toByte, char.toByte)
+        extension (char: Char) def toByteArr: Array[Byte] = char.toString.getBytes("UTF-16")
+        //Array(0.toByte, char.toByte) // BigInt(char.toInt).toByteArray.reverse.padTo(2, 0.toByte).reverse//
     }
 
     import valueToByteExtensions.*
