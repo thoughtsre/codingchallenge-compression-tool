@@ -77,4 +77,37 @@ object HuffmanTree {
             }
         }
     }
+
+    @tailrec
+    def decodeBits(
+                      root: HuffmanNode,
+                      startNode: HuffmanTreeBaseNode,
+                      bits: List[Char],
+                      curString: String = ""
+                  ): String = {
+
+        bits match {
+            case (h: Char) :: t => h match {
+                case '0' => {
+                    startNode match {
+                        case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
+                        case branch: HuffmanNode => branch.left match {
+                            case lLeaf: HuffmanLeaf => decodeBits(root, lLeaf, t, curString + lLeaf.char)
+                            case lBranch: HuffmanNode => decodeBits(root, lBranch, t, curString)
+                        }
+                    }
+                }
+                case '1' => {
+                    startNode match {
+                        case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
+                        case branch: HuffmanNode => branch.right match {
+                            case rLeaf: HuffmanLeaf => decodeBits(root, rLeaf, t, curString + rLeaf.char)
+                            case rBranch: HuffmanNode => decodeBits(root, rBranch, t, curString)
+                        }
+                    }
+                }
+            }
+            case Nil => curString
+        }
+    }
 }

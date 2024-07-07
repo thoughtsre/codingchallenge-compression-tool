@@ -2,11 +2,13 @@ import scala.io.Source
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.scalatest.flatspec.AsyncFlatSpec
 import org.scalatest.matchers.should.Matchers
-import CompressionTool.*
+import lib.Utils.*
+import lib.Preprocess.*
+import lib.HuffmanTree.*
 
 class FrequencyTableTestSuite extends AsyncFlatSpec with AsyncIOSpec with Matchers {
 
-    val testFileName = "testText.txt"
+    val testFileName = "src/test/resources/testText.txt"
     val testFreqTable = Map(
         'a' -> 4,
         'B' -> 2,

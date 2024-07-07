@@ -1,11 +1,12 @@
 import org.scalatest.flatspec.AsyncFlatSpec
 import cats.effect.testing.scalatest.AsyncIOSpec
 import org.scalatest.matchers.should.Matchers
-import CompressionTool.calculateFrequencyTable
+import lib.Utils.*
+import lib.Preprocess.*
 import lib.HuffmanTree.*
 
 class HuffmanTreeTestSuite extends AsyncFlatSpec with AsyncIOSpec with Matchers {
-    val testFileName = "testText.txt"
+    val testFileName = "src/test/resources/testText.txt"
     val testFileName2 = "testText2.txt"
 
     val leaf1: HuffmanLeaf = HuffmanLeaf('X', 3)
@@ -32,9 +33,15 @@ class HuffmanTreeTestSuite extends AsyncFlatSpec with AsyncIOSpec with Matchers 
                 HuffmanLeaf('.', 1)
             ).sorted
 
-            println(ans)
-
             initializeHuffmanLeafNodes(m) should contain theSameElementsInOrderAs ans
         })
+    }
+
+    "Given a list of bit characters and a Huffman tree" should "result in the correct string" in {
+        val tree = HuffmanNode(HuffmanLeaf('d', 2), HuffmanLeaf('e', 2), 4)
+
+        val decodedStr = decodeBits(tree, tree, "0110".toList, "")
+
+        assert(decodedStr === "deed")
     }
 }
