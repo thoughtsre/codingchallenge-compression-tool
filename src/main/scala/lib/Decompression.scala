@@ -110,11 +110,11 @@ object Decompression {
 
     val decompress: (String, String) => IO[Unit] = (compressedFileName, outputFileName) => for {
         _ <- IO.println("Begin decompression...")
-        (huffmanCode, freqTable) <- readCompressedFile(compressedFileName)
+        (huffmanCode, freqTable) <- readCompressedFile2(compressedFileName)
         - <- IO.println("Compressed file read...")
         tree <- generateFileHuffmanTree(freqTable)
         _ <- IO.println("Huffman tree generated...")
-        content <- retrieveChars(huffmanCode, tree)
+        content <- retrieveChars2(huffmanCode, tree)
         _ <- IO.println("Text decoded...")
         _ <- writeDecodedFile(outputFileName, content)
         _ <- IO.println("File decompressed!")
