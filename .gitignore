@@ -33,3 +33,5 @@ metals.sbt
 
 # current project
 *.ct
+*.tar.gz
+*.txt
