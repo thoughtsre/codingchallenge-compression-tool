@@ -31,7 +31,6 @@ object Compression {
     val compress: (String, String) => IO[Unit] = (fileName, outFileName) => for {
         _ <- IO.println("Begin compression...")
         freqTable <- calculateFrequencyTable(fileName)
-        _ <- IO.println(freqTable)
         _ <- IO.println("Frequency table computed...")
         root <- generateFileHuffmanTree(freqTable)
         _ <- IO.println("Huffman tree generated...")

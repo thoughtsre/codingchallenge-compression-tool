@@ -1,24 +1,36 @@
-import scala.io.{BufferedSource, Source}
-import cats.effect.{IO, IOApp, Resource}
+import cats.effect.{IO, ExitCode}
+import cats.implicits.*
+import com.monovore.decline.*
+import com.monovore.decline.effect.*
 
-import java.io.{File, FileInputStream, FileOutputStream}
-import lib.Utils.*
-import lib.Preprocess.*
-import lib.HuffmanTree.*
 import lib.Compression.compress
-import lib.Decompression.*
-import lib.Decompression.*
+import lib.Decompression.decompress
 
-import scala.annotation.tailrec
+object CompressionTool extends CommandIOApp(
+    name = "Compression Tool",
+    header = "Compression Tool",
+    version = "0.1.0"
+) {
 
-object CompressionTool extends IOApp.Simple {
+    override def main: Opts[IO[ExitCode]] = {
+        val doCompress = Opts.flag("compress", short = "c", help = "Compress file.").orFalse
+        val doDecompress = Opts.flag("decompress", short = "d", help = "Decompress file").orFalse
+        val inputFile = Opts.argument[String](metavar = "inputFileName")
+        val outputFile = Opts.argument[String](metavar = "outputFileName")
 
-    val fileName = "src/main/resources/lesmiserables.txt"
-    val compressFileName = "src/main/resources/compressedText.ct"
-    val outFileName = "src/main/resources/decompressed.txt"
-
-    val doCompress = false
-
-    override def run: IO[Unit] = if doCompress then compress(fileName, compressFileName) else decompress(compressFileName, outFileName)
+        (doCompress, doDecompress, inputFile, outputFile).mapN((c, d, inFileName, outFileName) => {
+            if (c & d) then {
+                IO.raiseError(new RuntimeException("Compress and decompress flags cannot both be true!")) >> IO(ExitCode(1))
+            } else if (!c & !d) then {
+                IO.raiseError(new RuntimeException("Compress and decompress flags cannot both be false!")) >> IO(ExitCode(1))
+            } else {
+                if c then {
+                    compress(inFileName, outFileName) >> IO(ExitCode(0))
+                } else {
+                    decompress(inFileName, outFileName) >> IO(ExitCode(0))
+                }
+            }
+        })
+    }
 
 }

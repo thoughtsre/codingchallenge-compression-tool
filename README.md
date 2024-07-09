@@ -1,8 +1,24 @@
-## sbt project compiled with Scala 3
+# CodingChallenge - Compression Tool
 
-### Usage
+## Overview
+This is my implementation of the compression tool from [codingchallenges.fyi](https://codingchallenges.fyi/challenges/challenge-huffman).
 
-This is a normal sbt project. You can compile code with `sbt compile`, run it with `sbt run`, and `sbt console` will start a Scala 3 REPL.
+The chosen language is Scala.
 
-For more information on the sbt-dotty plugin, see the
-[scala3-example-project](https://github.com/scala/scala3-example-project/blob/main/README.md).
+## To use
+1. Build JAR 
+```shell
+sbt assembly
+```
+
+2. Run with parameters
+
+To compress
+```shell
+java -jar target/scala-3.4.2/Compression Tool-assembly-0.1.0.jar -c <input_file_path> <output_file_path>
+```
+
+To decompress
+```shell
+java -jar target/scala-3.4.2/Compression Tool-assembly-0.1.0.jar -d <input_file_path> <output_file_path>
+```

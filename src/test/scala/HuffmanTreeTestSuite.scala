@@ -40,7 +40,7 @@ class HuffmanTreeTestSuite extends AsyncFlatSpec with AsyncIOSpec with Matchers 
     "Given a list of bit characters and a Huffman tree" should "result in the correct string" in {
         val tree = HuffmanNode(HuffmanLeaf('d', 2), HuffmanLeaf('e', 2), 4)
 
-        val decodedStr = decodeBits(tree, tree, "0110".toList, "")
+        val decodedStr = decodeBits(tree, tree, "0110".toList)
 
         assert(decodedStr === "deed")
     }

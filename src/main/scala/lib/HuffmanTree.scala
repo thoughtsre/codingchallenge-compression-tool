@@ -1,6 +1,5 @@
 package lib
 
-import java.nio.ByteBuffer
 import scala.annotation.tailrec
 
 object HuffmanTree {
@@ -84,7 +83,7 @@ object HuffmanTree {
                       root: HuffmanNode,
                       startNode: HuffmanTreeBaseNode,
                       bits: List[Char],
-                      curString: String = ""
+                      curString: StringBuilder = new StringBuilder()
                   ): String = {
 
         bits match {
@@ -93,7 +92,7 @@ object HuffmanTree {
                     startNode match {
                         case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
                         case branch: HuffmanNode => branch.left match {
-                            case lLeaf: HuffmanLeaf => decodeBits(root, lLeaf, t, curString + lLeaf.char)
+                            case lLeaf: HuffmanLeaf => decodeBits(root, lLeaf, t, curString += lLeaf.char)
                             case lBranch: HuffmanNode => decodeBits(root, lBranch, t, curString)
                         }
                     }
@@ -102,93 +101,33 @@ object HuffmanTree {
                     startNode match {
                         case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
                         case branch: HuffmanNode => branch.right match {
-                            case rLeaf: HuffmanLeaf => decodeBits(root, rLeaf, t, curString + rLeaf.char)
+                            case rLeaf: HuffmanLeaf => decodeBits(root, rLeaf, t, curString += rLeaf.char)
                             case rBranch: HuffmanNode => decodeBits(root, rBranch, t, curString)
                         }
                     }
                 }
             }
-            case Nil => curString
+            case Nil => curString.toString
         }
-    }
-
-    def decodeBytes(root: HuffmanNode, bytes: List[Byte]): String = {
-
-        @tailrec
-        def decodeBits(
-                          root: HuffmanNode,
-                          startNode: HuffmanTreeBaseNode,
-                          bits: List[Char],
-                          curString: String = ""
-                      ): (String, HuffmanTreeBaseNode) = {
-
-            bits match {
-                case (h: Char) :: t => h match {
-                    case '0' => {
-                        startNode match {
-                            case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
-                            case branch: HuffmanNode => branch.left match {
-                                case lLeaf: HuffmanLeaf => decodeBits(root, lLeaf, t, curString + lLeaf.char)
-                                case lBranch: HuffmanNode => decodeBits(root, lBranch, t, curString)
-                            }
-                        }
-                    }
-                    case '1' => {
-                        startNode match {
-                            case leaf: HuffmanLeaf => decodeBits(root, root, bits, curString)
-                            case branch: HuffmanNode => branch.right match {
-                                case rLeaf: HuffmanLeaf => decodeBits(root, rLeaf, t, curString + rLeaf.char)
-                                case rBranch: HuffmanNode => decodeBits(root, rBranch, t, curString)
-                            }
-                        }
-                    }
-                }
-                case Nil => (curString, startNode)
-            }
-        }
-
-        var startNode: HuffmanTreeBaseNode = root
-        var content: String = ""
-
-
-        for b <- bytes do {
-            val bits = b.toInt.toBinaryString.takeRight(8).reverse.padTo(8, "0").reverse.mkString.toList
-
-            var (content_int: String, startNode_int: HuffmanTreeBaseNode) = decodeBits(root, startNode, bits, content)
-
-            startNode = startNode_int
-            content = content_int
-        }
-
-        content
-
     }
 
     def isBitSet(byte: Byte)(bit: Int): Boolean =
         ((byte >> bit) & 1) == 1
 
-    def decodeBytes2(root: HuffmanNode, bytes: List[Byte]): String = {
-
-        println(f"There are ${bytes.length} bytes.")
+    def decodeBytes(root: HuffmanNode, bytes: List[Byte]): String = {
 
         var startNode: HuffmanTreeBaseNode = root
-        var content: String = ""
+        val content = new StringBuilder()
         var b: Byte = Byte.MinValue
         var c: Boolean = true
         var bits: Iterator[Boolean] = Iterator()
         val byteIterator = bytes.iterator
 
-        var counter = 0
-
         while byteIterator.hasNext do {
-
-            counter += 1
-
-            if (counter % 1000 == 0) then println(f"$counter bytes processed.")
 
             b = byteIterator.next
 
-            bits = (0 to 7 map isBitSet(b)).reverseIterator //b.toInt.toBinaryString.takeRight(8).reverse.padTo(8, '0').reverse.iterator
+            bits = (0 to 7 map isBitSet(b)).reverseIterator
 
             while bits.hasNext do {
 
@@ -235,62 +174,7 @@ object HuffmanTree {
             }
         }
 
-        content
+        content.toString
     }
-
-//    def decodeBytes2(root: HuffmanNode, bytes: List[Byte]): String = {
-//
-//        var startNode: HuffmanTreeBaseNode = root
-//        var content: String = ""
-//
-//        for b <- bytes do {
-//
-//            val bits = b.toInt.toBinaryString.takeRight(8).reverse.padTo(8, "0").reverse.mkString.toList
-//
-//            for c <- bits do {
-//
-//                c match {
-//                    case '0' => {
-//                        startNode match {
-//                            case leaf: HuffmanLeaf => {
-//                                startNode = root.left
-//                            }
-//                            case node: HuffmanNode => {
-//                                node.left match {
-//                                    case lleaf: HuffmanLeaf => {
-//                                        content += lleaf.char
-//                                        startNode = lleaf
-//                                    }
-//                                    case lnode: HuffmanNode => {
-//                                        startNode = lnode
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                    case '1' => {
-//                        startNode match {
-//                            case leaf: HuffmanLeaf => {
-//                                startNode = root.right
-//                            }
-//                            case node: HuffmanNode => {
-//                                node.right match {
-//                                    case rleaf: HuffmanLeaf => {
-//                                        content += rleaf.char
-//                                        startNode = rleaf
-//                                    }
-//                                    case rnode: HuffmanNode => {
-//                                        startNode = rnode
-//                                    }
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//            }
-//        }
-//
-//        content
-//    }
 
 }
