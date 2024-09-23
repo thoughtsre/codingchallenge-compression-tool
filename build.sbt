@@ -1,4 +1,11 @@
+import scala.scalanative.build._
+
 val scala3Version = "3.4.2"
+
+nativeConfig ~= {
+        _.withMode(Mode.releaseFull)
+            .withLTO(LTO.thin)
+}
 
 lazy val root = project
     .in(file("."))
